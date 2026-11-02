@@ -131,7 +131,7 @@ python scripts/imitation_learning/isaaclab_recorder/replay_demos.py \
   --video_file ./logs/make_toast_expert/replay_v4_front_center.mp4
 
 # Teleop and record 
-# TODO add teleoperation code
+# TODO: add teleoperation code
 python scripts/imitation_learning/isaaclab_recorder/record_demos.py \
   --task Cyclo-Make-Toast-FFW-BG2-Bimanual-IK-Rel-v2 --teleop_device handtracking \
   --dataset_file ./datasets/make_toast_manual/dataset.hdf5 \
