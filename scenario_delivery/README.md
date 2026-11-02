@@ -42,7 +42,9 @@ Scenario IDs range from `batch02_toast_000` to `batch02_toast_099`.
 
 ## Load a Scenario
 
-Use the scenario loader on the [`toast-scenarios-batch02` branch](https://github.com/kkkkkmj/cyclo_lab/tree/toast-scenarios-batch02), together with the existing Isaac Sim / Isaac Lab environment and required assets. Copying these data files into the original upstream repository alone does not apply the layouts automatically.
+Use the scenario loader on the [`toast-scenarios-100` branch](https://github.com/kkkkkmj/cyclo_lab/tree/toast-scenarios-100), together with the existing Isaac Sim / Isaac Lab environment and required assets. Copying these data files into the original upstream repository alone does not apply the layouts automatically.
+
+The branch has been renamed locally; the new GitHub branch link will become available after it is pushed. The existing remote branch is still `toast-scenarios-batch02`.
 
 The example below assumes the host checkout is `/home/mj/nrf_humanoid/cyclo_lab`, the existing container is named `cyclo_lab`, and the checkout is available inside it at `/workspace/cyclo_lab`. Check GPU availability before running it.
 
