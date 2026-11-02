@@ -177,6 +177,9 @@ class MakeToastFFWBG2BimanualServeEnvCfg(MakeToastFFWBG2BimanualCycleEnvCfg):
 
     serve_to_plate: bool = True
     toast_popup_extra_height: float = .015
+    # Optional fixed layout. Applied before InteractiveScene is constructed.
+    scenario_id: str | None = None
+    scenario_manifest: str | None = None
 
     def __post_init__(self):
         super().__post_init__()

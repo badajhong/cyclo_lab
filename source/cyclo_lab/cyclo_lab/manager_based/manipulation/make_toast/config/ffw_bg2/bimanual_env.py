@@ -9,6 +9,9 @@ class MakeToastFFWBG2BimanualEnv(ManagerBasedRLMimicEnv):
     EEF_NAMES = ("left", "right", "body")
 
     def __init__(self, cfg, **kwargs):
+        if getattr(cfg, "scenario_id", None) is not None:
+            from .scenarios import apply_scenario
+            apply_scenario(cfg, cfg.scenario_id)
         self.toast_cycle = None
         self._restoring_cycle = None
         if getattr(cfg, "toast_cycle_enabled", False) and getattr(cfg.recorders, "record_initial_state", None):

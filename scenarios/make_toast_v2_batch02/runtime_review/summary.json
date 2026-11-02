@@ -1,0 +1,88 @@
+{
+  "manifest_sha256": "edd672dde1619837bf6f065e9293d42c86486eb113cabdf417af5bc028213120",
+  "assignments_sha256": "9ab8d533f34189fb6dd43a01a5a97d277f39cb74c431ac7ba4ecd39e73f24fbc",
+  "sources": [
+    {
+      "path": "logs/scenario_batch02_six.46bMoE/results/summary.json",
+      "sha256": "82825542ee122c0bc54da87d828e2b9b2fbf14bb41d12e840610552726456813",
+      "manifest_hash_matches": true
+    },
+    {
+      "path": "logs/scenario_batch02_remaining.ucq8XR/results/summary.json",
+      "sha256": "bbdd44e66060f16c19e8d13122b8522f88a875cdf6c17be243f7fda717c56826",
+      "manifest_hash_matches": true
+    }
+  ],
+  "unique_ids": 100,
+  "missing_ids": [],
+  "duplicate_ids": [],
+  "all_exit_codes_zero": true,
+  "initial_pose_pass": 100,
+  "reset_0_pass": 100,
+  "reset_1_pass": 100,
+  "max_initial_position_error_m": 2.9711347937499966e-08,
+  "max_initial_quaternion_dot_error": 1.6052462048499194e-07,
+  "max_reset_scalar_error": 0.0,
+  "operators": {
+    "operator_A": {
+      "assigned": 50,
+      "layout_reset_verified": 50
+    },
+    "operator_B": {
+      "assigned": 50,
+      "layout_reset_verified": 50
+    }
+  },
+  "permutations": {
+    "toaster>plate>bread_shelf": {
+      "operator_A": 9,
+      "operator_B": 8
+    },
+    "toaster>bread_shelf>plate": {
+      "operator_B": 9,
+      "operator_A": 8
+    },
+    "plate>toaster>bread_shelf": {
+      "operator_A": 9,
+      "operator_B": 8
+    },
+    "plate>bread_shelf>toaster": {
+      "operator_B": 9,
+      "operator_A": 8
+    },
+    "bread_shelf>toaster>plate": {
+      "operator_A": 8,
+      "operator_B": 8
+    },
+    "bread_shelf>plate>toaster": {
+      "operator_A": 8,
+      "operator_B": 8
+    }
+  },
+  "snapshot_files_readable": 1500,
+  "visual_review": {
+    "head_images_reviewed": 300,
+    "head_samples": [
+      "initial",
+      "settled_0",
+      "settled_1"
+    ],
+    "review_method": "manual inspection of existing images in in-memory contact sheets; original images unmodified",
+    "wrist_sample_ids": [
+      "batch02_toast_020",
+      "batch02_toast_042",
+      "batch02_toast_064",
+      "batch02_toast_079",
+      "batch02_toast_093"
+    ],
+    "wrist_sample_note": "10 settled_1 wrist images inspected; workspace not visible. Remaining wrist images integrity-checked, not individually visually reviewed.",
+    "obvious_anomaly_ids": [],
+    "fully_visible_contact_or_stability": "NOT_VERIFIED",
+    "occlusion_notes": "See operator_validation.csv; frame-edge truncation is not proof of object escape."
+  },
+  "traceback_or_assertion_log_ids": [],
+  "reachability": "NOT_PROVEN",
+  "ik": "NOT_RUN",
+  "task_success": "NOT_TESTED",
+  "review_did_not_rerun_simulation": true
+}

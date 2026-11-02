@@ -1,0 +1,91 @@
+{
+  "summary": {
+    "target": 100,
+    "candidates": 100,
+    "gpu_verified": 0,
+    "task_validated": 0,
+    "assignments": {
+      "operator_A": 50,
+      "operator_B": 50
+    },
+    "rejections": {
+      "outside_table_planning_envelope": 1
+    },
+    "missing_evidence": [
+      "usable tabletop support polygons",
+      "authored/cooked collision geometry",
+      "USD kinematic model; reachability and IK not run"
+    ],
+    "note": "No failed criterion was relaxed. Six permutations considered; acceptance is only within stated static/provisional checks."
+  },
+  "permutations": [
+    {
+      "order": [
+        "toaster",
+        "plate",
+        "bread_shelf"
+      ],
+      "requested": 17,
+      "obtained": 17,
+      "attempts": 17,
+      "rejection_reasons": {}
+    },
+    {
+      "order": [
+        "toaster",
+        "bread_shelf",
+        "plate"
+      ],
+      "requested": 17,
+      "obtained": 17,
+      "attempts": 17,
+      "rejection_reasons": {}
+    },
+    {
+      "order": [
+        "plate",
+        "toaster",
+        "bread_shelf"
+      ],
+      "requested": 17,
+      "obtained": 17,
+      "attempts": 17,
+      "rejection_reasons": {}
+    },
+    {
+      "order": [
+        "plate",
+        "bread_shelf",
+        "toaster"
+      ],
+      "requested": 17,
+      "obtained": 17,
+      "attempts": 18,
+      "rejection_reasons": {
+        "outside_table_planning_envelope": 1
+      }
+    },
+    {
+      "order": [
+        "bread_shelf",
+        "toaster",
+        "plate"
+      ],
+      "requested": 16,
+      "obtained": 16,
+      "attempts": 16,
+      "rejection_reasons": {}
+    },
+    {
+      "order": [
+        "bread_shelf",
+        "plate",
+        "toaster"
+      ],
+      "requested": 16,
+      "obtained": 16,
+      "attempts": 16,
+      "rejection_reasons": {}
+    }
+  ]
+}

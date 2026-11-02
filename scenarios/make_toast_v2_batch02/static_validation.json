@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "scope": "CPU only; no simulation or pilot rerun",
+  "candidates": 100,
+  "audit_NOT_EXCLUDED": 100,
+  "operators": {
+    "operator_A": 50,
+    "operator_B": 50
+  },
+  "permutations": [
+    {
+      "order": [
+        "bread_shelf",
+        "plate",
+        "toaster"
+      ],
+      "operators": {
+        "operator_A": 8,
+        "operator_B": 8
+      }
+    },
+    {
+      "order": [
+        "bread_shelf",
+        "toaster",
+        "plate"
+      ],
+      "operators": {
+        "operator_A": 8,
+        "operator_B": 8
+      }
+    },
+    {
+      "order": [
+        "plate",
+        "bread_shelf",
+        "toaster"
+      ],
+      "operators": {
+        "operator_B": 9,
+        "operator_A": 8
+      }
+    },
+    {
+      "order": [
+        "plate",
+        "toaster",
+        "bread_shelf"
+      ],
+      "operators": {
+        "operator_A": 9,
+        "operator_B": 8
+      }
+    },
+    {
+      "order": [
+        "toaster",
+        "bread_shelf",
+        "plate"
+      ],
+      "operators": {
+        "operator_B": 9,
+        "operator_A": 8
+      }
+    },
+    {
+      "order": [
+        "toaster",
+        "plate",
+        "bread_shelf"
+      ],
+      "operators": {
+        "operator_A": 9,
+        "operator_B": 8
+      }
+    }
+  ],
+  "protected_files_unchanged": 287,
+  "minimum_extra_table_edge_clearance_after_20mm_m": 0.011985921192385339,
+  "minimum_visual_gap_m": 0.08969132798917806,
+  "simulator_layout_reset_verified": 0,
+  "reachability": "NOT_PROVEN",
+  "ik": "NOT_RUN",
+  "task_success": "NOT_TESTED"
+}
