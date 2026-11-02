@@ -64,6 +64,11 @@ _build
 # Teleop Recorded Dataset
 datasets
 
+# Isaac Lab's Python dataset utilities are source code, not demonstration data.
+!/third_party/IsaacLab/source/isaaclab/isaaclab/utils/datasets/
+/third_party/IsaacLab/source/isaaclab/isaaclab/utils/datasets/*
+!/third_party/IsaacLab/source/isaaclab/isaaclab/utils/datasets/*.py
+
 # Downloaded, checksum-pinned RoboDojo Make Toast objects (see asset_manifest.json).
 source/cyclo_lab/data/objects/robodojo_make_toast/
 
