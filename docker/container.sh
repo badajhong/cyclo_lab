@@ -1,0 +1,307 @@
+#!/usr/bin/env bash
+
+# Copyright (c) 2024, Cyclo Lab Project Developers.
+# All rights reserved.
+#
+# Based on Isaac Lab container management script
+
+#==
+# Configurations
+#==
+
+# Exits if error occurs
+set -e
+
+# Set tab-spaces when the terminal supports it.
+tabs 4 2>/dev/null || true
+
+# get source directory
+export CYCLOLAB_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
+export DOCKER_DIR="${CYCLOLAB_PATH}/docker"
+
+#==
+# Helper functions
+#==
+
+# print the usage description
+print_help() {
+    echo -e "\nusage: $(basename "$0") [-h] <command> [<args>]"
+    echo -e "\nCyclo Lab Docker Container Management Script"
+    echo -e "\noptional arguments:"
+    echo -e "  -h, --help           Display this help message."
+    echo ""
+    echo -e "commands:"
+    echo -e "  build                Build the docker image for Cyclo Lab"
+    echo -e "  start                Start the docker container"
+    echo -e "  recreate             Recreate the container from the current image"
+    echo -e "  enter                Enter the running docker container"
+    echo -e "  stop                 Stop the docker container"
+    echo -e "  clean                Remove the docker container and image"
+    echo -e "  logs                 Show logs from the container"
+    echo ""
+}
+
+# Load environment variables
+load_env() {
+    if [ -f "${DOCKER_DIR}/.env.base" ]; then
+        set -a
+        source "${DOCKER_DIR}/.env.base"
+        set +a
+        echo "[INFO] Loaded environment from .env.base"
+    else
+        echo "[ERROR] .env.base file not found in ${DOCKER_DIR}"
+        exit 1
+    fi
+}
+
+# Use the host architecture by default, while allowing either existing image
+# and container to be selected explicitly with CYCLOLAB_DOCKER_ARCH.
+configure_platform() {
+    COMPOSE_FILES=(-f docker-compose.yaml)
+    local host_arch="$(uname -m)"
+    local selected_arch="${CYCLOLAB_DOCKER_ARCH:-${host_arch}}"
+    case "${selected_arch}" in
+        aarch64|arm64)
+            export DOCKER_NAME_SUFFIX="-arm64"
+            COMPOSE_FILES+=(-f arm64.yaml)
+            echo "[INFO] Using ARM64 image and container"
+            ;;
+        x86_64|amd64)
+            if [[ "${host_arch}" == "aarch64" || "${host_arch}" == "arm64" ]]; then
+                COMPOSE_FILES+=(-f amd64.yaml)
+            fi
+            echo "[INFO] Using original x86-64 image and container"
+            ;;
+        *)
+            echo "[ERROR] Unsupported Docker architecture: ${selected_arch}" >&2
+            return 1
+            ;;
+    esac
+}
+
+# docker start and compose up can return before the container's entrypoint fails.
+verify_container_running() {
+    sleep 1
+    if [ "$(docker inspect -f '{{.State.Running}}' "cyclo_lab${DOCKER_NAME_SUFFIX}" 2>/dev/null)" != "true" ]; then
+        echo "[ERROR] Container exited during startup. Recent logs:" >&2
+        docker logs --tail 30 "cyclo_lab${DOCKER_NAME_SUFFIX}" >&2 || true
+        return 1
+    fi
+}
+
+# Initialize only the direct submodules required by the image. Arena carries
+# its own Isaac Lab gitlink, which must not replace Cyclo Lab's pinned runtime.
+initialize_submodules() {
+    echo "[INFO] Checking git submodules..."
+    cd "${CYCLOLAB_PATH}"
+    if [ ! -e ".git" ]; then
+        echo "[WARN] Not a git repository, skipping submodule initialization"
+        return 0
+    fi
+
+    if git submodule status | grep -q '^-'; then
+        echo "[INFO] Initializing direct git submodules..."
+        git submodule update --init
+        echo "[INFO] Git submodules initialized"
+    else
+        echo "[INFO] Git submodules already initialized"
+    fi
+}
+
+# Configure X11 forwarding
+setup_x11() {
+    # Check if xauth is installed
+    if ! command -v xauth &> /dev/null; then
+        echo "[WARN] xauth is not installed. X11 forwarding will not work."
+        echo "[WARN] Install with: sudo apt install xauth"
+        return 1
+    fi
+
+    # Check if DISPLAY is set
+    if [ -z "$DISPLAY" ]; then
+        echo "[WARN] DISPLAY variable is not set. X11 forwarding will not work."
+        return 1
+    fi
+
+    # Create temporary directory for xauth
+    export __CYCLOLAB_TMP_DIR=$(mktemp -d)
+    export __CYCLOLAB_TMP_XAUTH="${__CYCLOLAB_TMP_DIR}/.xauth"
+
+    # Create xauth file
+    touch "${__CYCLOLAB_TMP_XAUTH}"
+    xauth nlist "$DISPLAY" | sed -e 's/^..../ffff/' | xauth -f "${__CYCLOLAB_TMP_XAUTH}" nmerge -
+    
+    echo "[INFO] X11 forwarding configured"
+    echo "[INFO] XAUTH file: ${__CYCLOLAB_TMP_XAUTH}"
+
+    return 0
+}
+
+# Check if X11 is available
+check_x11() {
+    if [ -n "$DISPLAY" ] && command -v xauth &> /dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Build docker image
+build_image() {
+    echo "[INFO] Building Cyclo Lab docker image..."
+    initialize_submodules
+    cd "${DOCKER_DIR}"
+    docker compose "${COMPOSE_FILES[@]}" build cyclo_lab
+    echo "[INFO] Build complete!"
+}
+
+# Start docker container
+start_container() {
+    echo "[INFO] Starting Cyclo Lab docker container..."
+    initialize_submodules
+
+    cd "${DOCKER_DIR}"
+
+    # Setup X11 forwarding
+    X11_COMPOSE_FILE=()
+    if check_x11; then
+        if setup_x11; then
+            X11_COMPOSE_FILE=(-f x11.yaml)
+            echo "[INFO] X11 forwarding enabled"
+        fi
+    else
+        echo "[INFO] X11 forwarding not available (no DISPLAY or xauth)"
+    fi
+
+    # Check if container is already running
+    if [ -n "$(docker ps -q --filter "name=^cyclo_lab${DOCKER_NAME_SUFFIX}$")" ]; then
+        echo "[INFO] Container is already running"
+        return 0
+    fi
+
+    # Check if container exists but is stopped
+    if [ -n "$(docker ps -aq --filter "name=^cyclo_lab${DOCKER_NAME_SUFFIX}$")" ]; then
+        echo "[INFO] Starting existing container..."
+        docker start cyclo_lab${DOCKER_NAME_SUFFIX}
+    else
+        echo "[INFO] Creating and starting new container..."
+        docker compose "${COMPOSE_FILES[@]}" "${X11_COMPOSE_FILE[@]}" up -d cyclo_lab
+    fi
+
+    verify_container_running
+    echo "[INFO] Container started successfully!"
+    echo "[INFO] Use './docker/container.sh enter' to access the container"
+}
+
+# Recreate the container from the current image.
+recreate_container() {
+    echo "[INFO] Recreating Cyclo Lab docker container..."
+    cd "${DOCKER_DIR}"
+
+    X11_COMPOSE_FILE=()
+    if check_x11 && setup_x11; then
+        X11_COMPOSE_FILE=(-f x11.yaml)
+        echo "[INFO] X11 forwarding enabled"
+    fi
+
+    docker compose "${COMPOSE_FILES[@]}" "${X11_COMPOSE_FILE[@]}" up -d --force-recreate cyclo_lab
+    verify_container_running
+    echo "[INFO] Container recreated successfully!"
+}
+
+# Enter running container
+enter_container() {
+    echo "[INFO] Entering Cyclo Lab docker container..."
+
+    # Check if container is running
+    if [ -z "$(docker ps -q --filter "name=^cyclo_lab${DOCKER_NAME_SUFFIX}$")" ]; then
+        echo "[ERROR] Container is not running. Start it first with './docker/container.sh start'"
+        exit 1
+    fi
+
+    # Pass DISPLAY environment variable to the container
+    docker exec -it -e DISPLAY="${DISPLAY}" cyclo_lab${DOCKER_NAME_SUFFIX} /bin/bash
+}
+
+# Stop container
+stop_container() {
+    echo "[INFO] Stopping Cyclo Lab docker container..."
+    cd "${DOCKER_DIR}"
+    docker compose "${COMPOSE_FILES[@]}" stop cyclo_lab
+    echo "[INFO] Container stopped"
+}
+
+# Clean up container and image
+clean_docker() {
+    echo "[INFO] Cleaning up Cyclo Lab docker resources..."
+    cd "${DOCKER_DIR}"
+
+    read -p "This will remove the container and image. Continue? (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        docker compose "${COMPOSE_FILES[@]}" rm -sf cyclo_lab
+        docker rmi robotis/cyclo-lab${DOCKER_NAME_SUFFIX}:latest || true
+        echo "[INFO] Cleanup complete"
+    else
+        echo "[INFO] Cleanup cancelled"
+    fi
+}
+
+# Show container logs
+show_logs() {
+    echo "[INFO] Showing Cyclo Lab container logs..."
+    cd "${DOCKER_DIR}"
+    docker compose "${COMPOSE_FILES[@]}" logs -f cyclo_lab
+}
+
+#==
+# Main
+#==
+
+# check argument provided
+if [ -z "$*" ]; then
+    echo "[ERROR] No arguments provided." >&2
+    print_help
+    exit 1
+fi
+
+# Load environment variables
+load_env
+configure_platform
+
+# pass the arguments
+case "$1" in
+    build)
+        build_image
+        ;;
+    start)
+        start_container
+        ;;
+    recreate)
+        recreate_container
+        ;;
+    enter)
+        enter_container
+        ;;
+    stop)
+        stop_container
+        ;;
+    clean)
+        clean_docker
+        ;;
+    logs)
+        show_logs
+        ;;
+    -h|--help)
+        print_help
+        exit 0
+        ;;
+    *)
+        echo "[ERROR] Invalid command: $1"
+        print_help
+        exit 1
+        ;;
+esac
+
+echo ""
+echo "[INFO] Command completed successfully!"

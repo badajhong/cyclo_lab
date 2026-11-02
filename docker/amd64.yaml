@@ -1,0 +1,4 @@
+# Keep the original image architecture explicit when managing it from ARM64.
+services:
+  cyclo_lab:
+    platform: linux/amd64

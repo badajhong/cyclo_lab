@@ -1,0 +1,9 @@
+# Keep ARM64 images, containers, and cache volumes separate from x86-64 ones.
+name: cyclo_lab_arm64
+
+services:
+  cyclo_lab:
+    platform: linux/arm64
+    build:
+      args:
+        PIP_CONSTRAINT_FILE: constraints.isaacsim.arm64.txt

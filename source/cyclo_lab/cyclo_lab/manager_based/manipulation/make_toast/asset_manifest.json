@@ -1,0 +1,61 @@
+{
+  "repository": "RoboDojo-Benchmark/RoboDojo",
+  "revision": "63fcc045f2e974902eb7800d29de48004cf86016",
+  "license": "Apache-2.0 (dataset card)",
+  "files": [
+    {
+      "path": "toaster/object.usdz",
+      "source_path": "Assets/Object/RoboDojo/Articulation/toaster/00000/object.usdz",
+      "sha256": "0d80971f2a3d310e2fc65bc6ad624bab9866303099038ecbef91fe37b02e8e82",
+      "size": 141621
+    },
+    {
+      "path": "toaster/metadata.json",
+      "source_path": "Assets/Object/RoboDojo/Articulation/toaster/00000/metadata.json",
+      "sha256": "476c1f9f7325c449fe8ea826a4aefcde86f8487905f767ab50d5dc1d0a651410",
+      "size": 6974
+    },
+    {
+      "path": "bread/object.usdz",
+      "source_path": "Assets/Object/RoboDojo/Rigid/bread/00000/object.usdz",
+      "sha256": "e3a1e5796c033de3c1b29e28e1a13e03e2e60725884d9a071326cd9397f33839",
+      "size": 10230380
+    },
+    {
+      "path": "bread/metadata.json",
+      "source_path": "Assets/Object/RoboDojo/Rigid/bread/00000/metadata.json",
+      "sha256": "dc737e551515f5d8f33e26aff0d7ad390547bae215fc29270f76946d01fa3297",
+      "size": 4428
+    },
+    {
+      "path": "bread_shelf/object.usdz",
+      "source_path": "Assets/Object/RoboDojo/Geometry/bread_shelf/00000/object.usdz",
+      "sha256": "c4b7c56c5f609485808e6fd0db4fbdf09393b4b5f8aa8a214f11ce894b2a3b7e",
+      "size": 31418204
+    },
+    {
+      "path": "bread_shelf/metadata.json",
+      "source_path": "Assets/Object/RoboDojo/Geometry/bread_shelf/00000/metadata.json",
+      "sha256": "912d3a2e46fbfc159d22c675af98a40fbbc8502134cecdfbe8a1db9f55c89773",
+      "size": 5791
+    },
+    {
+      "path": "plate/description.json",
+      "source_path": "Assets/Object/RoboDojo/Rigid/plate/00002/description.json",
+      "sha256": "52c41b7a7713fb61ae07b8a5aa95df69229d32f6069cbc9d7362caf9d9eb4b66",
+      "size": 7321
+    },
+    {
+      "path": "plate/metadata.json",
+      "source_path": "Assets/Object/RoboDojo/Rigid/plate/00002/metadata.json",
+      "sha256": "22b1c8fb00d7d4a0a48d6d65b40c1166be68affe3441fc462e06e68800ecccba",
+      "size": 3430
+    },
+    {
+      "path": "plate/object.usdz",
+      "source_path": "Assets/Object/RoboDojo/Rigid/plate/00002/object.usdz",
+      "sha256": "c63472e16a20fb12e856d89c4f92e33546677285124838766c6555f8abfbf473",
+      "size": 28072986
+    }
+  ]
+}
