@@ -42,31 +42,36 @@ Scenario IDs range from `batch02_toast_000` to `batch02_toast_099`.
 
 ## Load a Scenario
 
-Use the scenario loader on the [`toast-scenarios-100` branch](https://github.com/kkkkkmj/cyclo_lab/tree/toast-scenarios-100), together with the existing Isaac Sim / Isaac Lab environment and required assets. Copying these data files into the original upstream repository alone does not apply the layouts automatically.
+Use this fork's `toast-scenarios-100` branch with **Isaac Sim 5.1.0 / Isaac Lab 2.3.0**, the installed `cyclo_lab` package, and the original robot, table, and toast object assets. Keep the repository's Docker and asset download setup. Copying this data folder into the upstream repository alone does not install the scenario loader.
 
-The branch has been renamed locally; the new GitHub branch link will become available after it is pushed. The existing remote branch is still `toast-scenarios-batch02`.
-
-The example below assumes the host checkout is `/home/mj/nrf_humanoid/cyclo_lab`, the existing container is named `cyclo_lab`, and the checkout is available inside it at `/workspace/cyclo_lab`. Check GPU availability before running it.
-
-Choose an ID assigned to you. This command loads the layout, checks its initial poses and restoration across two resets, saves reports and snapshots, and then exits. It is a layout/reset diagnostic, not a teleoperation or demonstration-collection command.
+With the repository’s default Docker configuration, the checkout is mounted at `/workspace/cyclo_lab` inside the `cyclo_lab` container, regardless of the host checkout’s directory name. Run from the host; `-w` sets the container working directory to the repository root:
 
 ```bash
-cd /home/mj/nrf_humanoid/cyclo_lab
-scenario_id=batch02_toast_000  # Replace with an ID assigned to you.
-run_dir=$(mktemp -d "$PWD/logs/delivery_check.XXXXXX")
-docker exec -w /workspace/cyclo_lab cyclo_lab /isaac-sim/python.sh \
-  scripts/tools/check_make_toast_scenarios.py \
-  --scenario_id "$scenario_id" \
-  --scenario_manifest /workspace/cyclo_lab/scenario_delivery/manifest.json \
-  --headless --snapshots \
-  --output_dir "/workspace/cyclo_lab/logs/$(basename "$run_dir")/$scenario_id"
+docker exec -it -w /workspace/cyclo_lab cyclo_lab /isaac-sim/python.sh \
+  scripts/tools/view_make_toast_scenario.py \
+  --scenario_id batch02_toast_000 \
+  --scenario_manifest scenario_delivery/manifest.json
 ```
 
-Omit `--headless` for GUI inspection; the diagnostic still exits after completing its checks. If you move this folder, update `--scenario_manifest` to its path inside the container. Reset restores the selected ID's initial layout. Create a new environment when switching IDs.
+Choose your ID from the assignment table. The manifest argument is optional: it defaults to this checkout's `scenario_delivery/manifest.json`. An explicit path can select another compatible fixed-pose manifest. Omitting `--scenario_id` preserves the original task layout. The default manifest is resolved from the installed loader’s source location, not the current working directory; use the editable checkout installation provided by the Docker setup. Explicit relative manifest paths are resolved from the process working directory. If you customize `DOCKER_CYCLOLAB_PATH` or `DOCKER_NAME_SUFFIX`, adjust the container path or name in these commands accordingly.
+
+The viewer holds the arms with open grippers and lift at zero. It does not run the expert, record demonstrations, or deliberately disturb objects. GUI display access must be configured for the existing container. Focus the simulation window and press **R** to reset; close the window to exit. Reset restores the same initial poses, after which objects can settle under physics. Start a new environment to change IDs.
+
+For a finite headless check of the viewer and two resets, first check GPU availability, then use:
+
+```bash
+docker exec -w /workspace/cyclo_lab cyclo_lab /isaac-sim/python.sh \
+  scripts/tools/view_make_toast_scenario.py \
+  --scenario_id batch02_toast_000 --headless --steps 150 --reset_every 50
+```
+
+Each reset checks the immediate object poses against the selected configuration and prints `RESET_POSES_OK`; a completed finite run prints `VIEW_COMPLETE`. This is not a manipulation or full-task test.
 
 ## Validation
 
 All 100 scenarios were verified for initial placement and restoration across two resets.
+
+A separate headless smoke check of the minimal viewer completed for `batch02_toast_000`: initial placement and two resets passed (`RESET_POSES_OK` three times), followed by `VIEW_COMPLETE steps=150` and exit code 0. This check does not cover GUI keyboard handling or manipulation.
 
 ## Files
 
