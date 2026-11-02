@@ -5,7 +5,7 @@ Fork: https://github.com/kkkkkmj/cyclo_lab.git
 원본 `README.md`, `README_TOAST.md` 및 기존 로컬 변경은 보존합니다.
 
 전체 작업본은 이 Fork에, 수집 담당자에게 전달할 최소 데이터는
-[scenario_delivery/README_scenario.md](scenario_delivery/README_scenario.md)에 정리합니다.
+[scenario_delivery/README.md](scenario_delivery/README.md)에 정리합니다.
 
 ## 1. 누락된 Isaac Lab datasets 소스 복구
 
@@ -96,7 +96,7 @@ run_dir=$(mktemp -d /workspace/cyclo_lab/logs/original_toast_check.XXXXXX)
 
 ### 공유 manifest로 ID 적용 및 reset 확인
 
-[전달물 사용법](scenario_delivery/README_scenario.md)의 호스트 명령을 사용합니다.
+[전달물 사용법](scenario_delivery/README.md)의 호스트 명령을 사용합니다.
 이 명령은 expert 없이 초기 배치와 reset을 검사합니다. GUI 확인은 `--headless`를 빼면 되며,
 계속 켜두는 viewer가 아니라 유한 길이 검사입니다.
 
@@ -158,11 +158,11 @@ ID 변경은 새 cfg/environment로 수행합니다. 동일 환경에서 `env.re
 ### 권장 커밋 3 — 작업 설명과 최소 전달 패키지
 
 - 새 `README_WORK.md`.
-- `scenario_delivery/README_scenario.md`.
-- `scenario_delivery/manifest.json`, `assignments.csv`, `preview.html`:
-  batch02 원본과 byte-identical 복사본.
+- `scenario_delivery/README.md`, `scenario_delivery/ASSIGNMENTS.md`.
+- `scenario_delivery/manifest.json`, `preview.html`: batch02 원본과 byte-identical 복사본.
+- `scenario_delivery/assignments.csv`: 원본의 ID·담당자·순서를 그대로 유지한 3열 전달용 CSV.
 
-상대방에게 따로 보내는 것은 **scenario_delivery의 위 4개 파일**입니다.
+상대방에게 따로 보내는 것은 **scenario_delivery의 위 5개 파일**입니다.
 이 폴더는 원본 구현·asset·과거 로그를 포함하지 않는 배치 데이터 전달물입니다.
 
 ### 이번 업로드 대상에서 제외하고 로컬 보존
